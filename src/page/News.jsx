@@ -42,3 +42,4 @@ const NewsCard = ({ details }) => {
 }
 
 export default News
+

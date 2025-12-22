@@ -48,10 +48,7 @@ const Footer = () => {
                 <footer className="px-10 py-4 border-t border-base-300 text-base-content">
                     <div className="flex flex-col sm:flex-row justify-between items-center gap-2">
                         <p className="text-sm opacity-70">
-                            © {new Date().getFullYear()} ACME News Network. All rights reserved.
-                        </p>
-                        <p className="text-xs opacity-50">
-                            Made with ❤️ for quality journalism
+                            © {new Date().getFullYear()} Daily News Network. All rights reserved.
                         </p>
                     </div>
                 </footer>
