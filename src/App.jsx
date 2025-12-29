@@ -1,48 +1,31 @@
-import React from "react"
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"
-import Navbar from "./component/Navbar"
-import News from "./page/news"
-import Category from "./component/Category"
-import Footer from "./component/Footer"
-import Legal from "./page/Legal"
-import AboutContact from "./page/AboutContact"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import Navbar from "./component/Navbar";
+import Category from "./component/Category";
+import News from "./page/News";
+import Footer from "./component/Footer";
+import AboutContact from "./page/AboutContact";
+import Legal from "./page/Legal";
 
-function App() {
+const App = () => {
   return (
-    <Router>
-      {/* Navbar - shows on every page */}
-      <Navbar />
+    <BrowserRouter>
+      <div className="min-h-screen flex flex-col">
+        <Navbar />
+        <Category />
 
-      {/* Category buttons - shows on every page */}
-      <Category />
+        <main className="grow">
+          <Routes>
+            <Route path="/" element={<News />} />
+            <Route path="/about" element={<AboutContact />} />
+            <Route path="/contact" element={<AboutContact />} />
+            <Route path="/legal/:type" element={<Legal />} />
+          </Routes>
+        </main>
 
-      {/* Main content area - this changes based on the URL */}
-      <main className="min-h-screen">
-        <Routes>
-          {/* Home Page - shows news */}
-          <Route path="/" element={<News />} />
+        <Footer />
+      </div>
+    </BrowserRouter>
+  );
+};
 
-          {/* News Category Routes - all show News for now */}
-          <Route path="/world" element={<News />} />
-          <Route path="/politics" element={<News />} />
-          <Route path="/tech" element={<News />} />
-
-          {/* Legal Pages - all use the same Legal component */}
-          <Route path="/privacy" element={<Legal />} />
-          <Route path="/terms" element={<Legal />} />
-          <Route path="/cookies" element={<Legal />} />
-          <Route path="/ethics" element={<Legal />} />
-
-          {/* About & Contact Pages */}
-          <Route path="/about" element={<AboutContact />} />
-          <Route path="/contact" element={<AboutContact />} />
-        </Routes>
-      </main>
-
-      {/* Footer - shows on every page */}
-      <Footer />
-    </Router>
-  )
-}
-
-export default App
+export default App;

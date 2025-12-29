@@ -8,44 +8,91 @@ const NewsContextProvider = ({ children }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
 
-    const fetchNews = useCallback(async (query = "america") => {
-        if (!import.meta.env.VITE_GNEWS_API_KEY) {
-            setError("API key is missing. Please check your .env file.");
-            return;
-        }
+    // Store filters for category, query, and page
+    const [filters, setFilters] = useState({
+        query: "",
+        category: "",
+        page: 1,
+    });
 
+    const fetchNews = useCallback(async (newFilters = {}) => {
         setLoading(true);
         setError(null);
 
+        // 1. Calculate what the NEXT state should be
+        // If newFilters has a value, use it. Otherwise, use what's already in state.
+        let nextQuery = newFilters.query !== undefined ? newFilters.query : filters.query;
+        let nextCategory = newFilters.category !== undefined ? newFilters.category : filters.category;
+        const nextPage = newFilters.page || 1;
+
+        // 2. Logic Fix: Clear conflicts
+        // If the user starts a NEW SEARCH, clear the category
+        if (newFilters.query && newFilters.query.trim() !== "") {
+            nextCategory = "";
+        }
+        // If the user clicks a NEW CATEGORY, clear the search query
+        else if (newFilters.category) {
+            nextQuery = "";
+        }
+
+        // 3. Update the state so the UI stays in sync
+        setFilters({
+            query: nextQuery,
+            category: nextCategory,
+            page: nextPage
+        });
+
         try {
-            const res = await api.get(
-                `/search?q=${query}&lang=en&token=${import.meta.env.VITE_GNEWS_API_KEY}`
-            );
+            // NewsAPI logic: 
+            // If there is a search query, use /everything. 
+            // If not, use /top-headlines.
+            const isSearching = nextQuery && nextQuery.trim().length > 0;
+            const endpoint = isSearching ? "/everything" : "/top-headlines";
 
-            if (res.status === 200) {
-                setNews(res.data.articles);
-            } else {
-                setError("Failed to fetch news. Status: " + res.status);
-                setNews([]);
-            }
+            const res = await api.get(endpoint, {
+                params: {
+                    apiKey: import.meta.env.VITE_NEWS_API_KEY,
+                    page: nextPage,
+                    pageSize: 8,
+                    language: "en",
+                    ...(isSearching
+                        ? { q: nextQuery }
+                        : { category: nextCategory || "general", country: "us" }
+                    ),
+                },
+            });
+
+            //    try {
+            //     const isSearching = nextQuery && nextQuery.trim().length > 0;
+
+            //     // GNews uses /search for keywords and /top-headlines for categories
+            //     const endpoint = isSearching ? "/search" : "/top-headlines";
+
+            //     const res = await api.get(endpoint, {
+            //         params: {
+            //             token: import.meta.env.VITE_GNEWS_API_KEY, // GNews uses 'token'
+            //             page: nextPage,
+            //             max: 8, // GNews uses 'max' instead of 'pageSize'
+            //             lang: "en",
+            //             ...(isSearching 
+            //                 ? { q: nextQuery } 
+            //                 : { category: nextCategory || "general" }
+            //             ),
+            //         },
+            //     });
+
+            setNews(res.data.articles || []);
         } catch (err) {
-            console.error("API error:", err.response?.status, err.message);
-
-            if (err.response?.status === 403) {
-                setError(
-                    "API limit reached or invalid key. Free plan allows 50 requests/day."
-                );
-            } else {
-                setError("Something went wrong. Please try again later.");
-            }
+            console.log(err)
+            setError("Failed to fetch news.");
             setNews([]);
         } finally {
             setLoading(false);
         }
-    }, []);
+    }, [filters]);
 
     return (
-        <NewsContext.Provider value={{ news, fetchNews, loading, error }}>
+        <NewsContext.Provider value={{ news, fetchNews, loading, error, filters }}>
             {children}
         </NewsContext.Provider>
     );
