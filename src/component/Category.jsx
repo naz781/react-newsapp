@@ -4,9 +4,10 @@ import { useNewsContext } from "../context/NewsContext";
 const Category = () => {
     const { fetchNews } = useNewsContext();
     const categories = [
+        "general",
+        "World",
         "business",
         "entertainment",
-        "general",
         "health",
         "science",
         "sports",

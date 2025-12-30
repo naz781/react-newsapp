@@ -42,46 +42,56 @@ const NewsContextProvider = ({ children }) => {
             page: nextPage
         });
 
+        // try {
+        // NewsAPI logic: 
+        // If there is a search query, use /everything. 
+        // If not, use /top-headlines.
+        // const isSearching = nextQuery && nextQuery.trim().length > 0;
+        // const endpoint = isSearching ? "/everything" : "/top-headlines";
+
+        // const res = await api.get(endpoint, {
+        //     params: {
+        //         apiKey: import.meta.env.VITE_NEWS_API_KEY,
+        //         page: nextPage,
+        //         pageSize: 8,
+        //         language: "en",
+        //         ...(isSearching
+        //             ? { q: nextQuery }
+        //             : { category: nextCategory || "general", country: "us" }
+        //         ),
+        //     },
+        // });
+
         try {
-            // NewsAPI logic: 
-            // If there is a search query, use /everything. 
-            // If not, use /top-headlines.
             const isSearching = nextQuery && nextQuery.trim().length > 0;
-            const endpoint = isSearching ? "/everything" : "/top-headlines";
+
+            // GNews uses /search for keywords and /top-headlines for categories
+            const endpoint = isSearching ? "/search" : "/top-headlines";
 
             const res = await api.get(endpoint, {
                 params: {
-                    apiKey: import.meta.env.VITE_NEWS_API_KEY,
+                    token: import.meta.env.VITE_GNEWS_API_KEY, // GNews uses 'token'
                     page: nextPage,
-                    pageSize: 8,
-                    language: "en",
+                    max: 8, // GNews uses 'max' instead of 'pageSize'
+                    lang: "en",
                     ...(isSearching
                         ? { q: nextQuery }
-                        : { category: nextCategory || "general", country: "us" }
+                        : { category: nextCategory || "general" }
                     ),
                 },
             });
+            const rawArticles = res.data.articles || [];
 
-            //    try {
-            //     const isSearching = nextQuery && nextQuery.trim().length > 0;
+            // --- DEDUPLICATION LOGIC ---
+            // We filter the array to ensure every title is unique
+            const uniqueArticles = rawArticles.filter((article, index, self) =>
+                index === self.findIndex((a) => (
+                    // Use title and description for a stricter check
+                    a.title === article.title || a.url === article.url
+                ))
+            );
 
-            //     // GNews uses /search for keywords and /top-headlines for categories
-            //     const endpoint = isSearching ? "/search" : "/top-headlines";
-
-            //     const res = await api.get(endpoint, {
-            //         params: {
-            //             token: import.meta.env.VITE_GNEWS_API_KEY, // GNews uses 'token'
-            //             page: nextPage,
-            //             max: 8, // GNews uses 'max' instead of 'pageSize'
-            //             lang: "en",
-            //             ...(isSearching 
-            //                 ? { q: nextQuery } 
-            //                 : { category: nextCategory || "general" }
-            //             ),
-            //         },
-            //     });
-
-            setNews(res.data.articles || []);
+            setNews(uniqueArticles);
         } catch (err) {
             console.log(err)
             setError("Failed to fetch news.");

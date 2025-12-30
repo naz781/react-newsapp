@@ -34,15 +34,15 @@ const News = () => {
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
 
-                {/* {news.map(
+                {news.map(
                     (item, i) =>
                         item.image && <NewsCard key={i} details={item} />
-                )} */}
-
+                )}
+                {/* 
                 {news.map((item, i) => (
                     // Remove the 'item.image &&' check or change it to 'item.urlToImage'
                     item.urlToImage && <NewsCard key={i} details={item} />
-                ))}
+                ))} */}
             </div>
 
             <div className="flex justify-center gap-4 py-6">
@@ -76,13 +76,13 @@ const NewsCard = ({ details }) => {
         <div className="card bg-base-200 shadow">
             <figure>
                 <img
-                    // src={details.image}
-                    // alt={details.title}
-                    // className="aspect-video object-cover"
-                    // USE urlToImage for NewsAPI
-                    src={details.urlToImage || "https://via.placeholder.com/400x225?text=No+Image"}
+                    src={details.image}
                     alt={details.title}
                     className="aspect-video object-cover"
+                    USE urlToImage for NewsAPI
+                // src={details.urlToImage || "https://via.placeholder.com/400x225?text=No+Image"}
+                // alt={details.title}
+                // className="aspect-video object-cover"
                 />
             </figure>
             <div className="card-body">
