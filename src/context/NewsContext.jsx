@@ -72,7 +72,7 @@ const NewsContextProvider = ({ children }) => {
                 params: {
                     token: import.meta.env.VITE_GNEWS_API_KEY, // GNews uses 'token'
                     page: nextPage,
-                    max: 10, // GNews uses 'max' instead of 'pageSize'
+                    max: 8, // GNews uses 'max' instead of 'pageSize'
                     lang: "en",
                     ...(isSearching
                         ? { q: nextQuery }

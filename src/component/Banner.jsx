@@ -24,7 +24,7 @@ const Banner = () => {
     }
 
     return (
-        <div className="relative w-full h-64 md:h-96 overflow-hidden rounded-2xl mb-8 group">
+        <div className="relative w-full h-80 md:h-125 overflow-hidden rounded-2xl mb-8 group">
             {bannerItems.map((article, index) => (
                 <div
                     key={index}
@@ -35,7 +35,7 @@ const Banner = () => {
                     <img
                         src={article.urlToImage || article.image || "https://via.placeholder.com/1200x600?text=News+Today"}
                         alt={article.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full  object-cover"
                     />
 
                     {/* Gradient Overlay */}
