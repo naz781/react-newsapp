@@ -33,10 +33,10 @@ const News = () => {
                 </h3>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-
-                {news.map(
-                    (item, i) =>
-                        item.image && <NewsCard key={i} details={item} />
+                {news.map((item, i) =>
+                    // GNews uses 'item.image'. 
+                    // If this is null, the card won't show, so we add a fallback check.
+                    (item.image || item.description) && <NewsCard key={i} details={item} />
                 )}
                 {/* 
                 {news.map((item, i) => (
@@ -76,7 +76,7 @@ const NewsCard = ({ details }) => {
         <div className="card bg-base-200 shadow">
             <figure>
                 <img
-                    src={details.image}
+                    src={details.image || "https://via.placeholder.com/400x225?text=No+Image"}
                     alt={details.title}
                     className="aspect-video object-cover"
                     USE urlToImage for NewsAPI

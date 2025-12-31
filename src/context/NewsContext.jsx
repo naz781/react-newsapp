@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, useCallback } from "react";
-import api from "../config/axios";
+import api from "../config/axios"
 
 const NewsContext = createContext();
 
@@ -68,11 +68,11 @@ const NewsContextProvider = ({ children }) => {
             // GNews uses /search for keywords and /top-headlines for categories
             const endpoint = isSearching ? "/search" : "/top-headlines";
 
-            const res = await api.get(endpoint, {
+            const res = await api.get("/api/news", {
                 params: {
-                    token: import.meta.env.VITE_GNEWS_API_KEY, // GNews uses 'token'
+                    endpoint: endpoint, // We send the endpoint name to the server
                     page: nextPage,
-                    max: 8, // GNews uses 'max' instead of 'pageSize'
+                    max: 8,
                     lang: "en",
                     ...(isSearching
                         ? { q: nextQuery }
