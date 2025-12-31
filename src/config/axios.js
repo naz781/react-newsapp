@@ -9,9 +9,9 @@
 import axios from 'axios';
 
 const api = axios.create({
-    // IMPORTANT: Set this to '/' or leave it out. 
-    // This tells axios to look for the /api folder on YOUR website.
+    // Points to your own domain (Vercel's serverless functions)
     baseURL: '/',
+    timeout: 5000,
 });
 
 export default api;
